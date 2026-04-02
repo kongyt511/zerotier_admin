@@ -35,7 +35,9 @@ async def list_members(nwid: str):
                     timeout=5,
                 )
                 if mr.status_code == 200:
-                    members.append(mr.json())
+                    data = mr.json()
+                    data.setdefault('nodeId', mid)
+                    members.append(data)
             return members
         except httpx.ConnectError:
             raise HTTPException(status_code=503, detail="Cannot connect to ZeroTier")
@@ -55,7 +57,9 @@ async def get_member(nwid: str, mid: str):
                 timeout=5,
             )
             r.raise_for_status()
-            return r.json()
+            data = r.json()
+            data.setdefault('nodeId', mid)
+            return data
         except httpx.ConnectError:
             raise HTTPException(status_code=503, detail="Cannot connect to ZeroTier")
         except httpx.HTTPStatusError as e:
